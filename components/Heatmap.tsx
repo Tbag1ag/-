@@ -83,16 +83,8 @@ export const Heatmap: React.FC<HeatmapProps> = ({ entries }) => {
     const points: { date: Date; value: number }[] = [];
     let cumulativeTotal = 0;
 
-    // Iterate through weeks to build cumulative data
-    // Important: We must start calculating cumulative sum from the very beginning of data (minDate)
-    // even if we only display from 'current' (tenWeeksAgo).
-    // However, the current logic sets 'current' to the start of the visible range. 
-    // If 'minDate' < 'current', we miss the initial accumulation.
-    
-    // Correct approach: Iterate from minDate to maxDate.
-    // Use a temporary cursor for calculation.
+    // Iterate from minDate to maxDate to calculate cumulative
     let calcCursor = new Date(minDate);
-    // Align calcCursor to Sunday
     const calcDay = calcCursor.getDay();
     calcCursor.setDate(calcCursor.getDate() + (calcDay === 0 ? 0 : 7 - calcDay));
 
@@ -101,7 +93,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ entries }) => {
         const weeklyAmount = map.get(key) || 0;
         cumulativeTotal += weeklyAmount;
 
-        // Only push points if they are within our desired display range (current -> maxDate)
+        // Only push points if they are within our desired display range
         if (calcCursor >= current) {
              points.push({
                 date: new Date(calcCursor), // Clone
@@ -119,7 +111,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ entries }) => {
   const svgContent = useMemo(() => {
     if (dimensions.width === 0 || data.length === 0) return null;
 
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 }; // Increased left margin for larger numbers
+    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
     const width = dimensions.width - margin.left - margin.right;
     const height = dimensions.height - margin.top - margin.bottom;
 
@@ -131,13 +123,13 @@ export const Heatmap: React.FC<HeatmapProps> = ({ entries }) => {
     const maxVal = d3.max(data, d => d.value) || 100;
 
     const y = d3.scaleLinear()
-        .domain([Math.min(0, minVal), maxVal * 1.05]) // Handle potential negative starts, add 5% headroom
+        .domain([Math.min(0, minVal), maxVal * 1.05])
         .nice()
         .range([height, 0]);
 
     // Area Generator
     const area = d3.area<{ date: Date; value: number }>()
-        .curve(d3.curveCatmullRom.alpha(0.5)) // Smooth curve
+        .curve(d3.curveCatmullRom.alpha(0.5))
         .x(d => x(d.date))
         .y0(height)
         .y1(d => y(d.value));
@@ -165,17 +157,10 @@ export const Heatmap: React.FC<HeatmapProps> = ({ entries }) => {
 
     // Points for interaction
     const pointsRender = data.map((d, i) => {
-        // Format tooltip date
-        const year = d.date.getFullYear();
-        const month = String(d.date.getMonth() + 1).padStart(2, '0');
-        const day = String(d.date.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
-
         return {
             x: x(d.date),
             y: y(d.value),
-            value: d.value,
-            date: dateStr
+            value: d.value
         };
     });
 
@@ -223,34 +208,57 @@ export const Heatmap: React.FC<HeatmapProps> = ({ entries }) => {
                     filter="url(#shadow)"
                 />
 
-                {/* Interactive Points */}
+                {/* Interactive Points with Crosshair Guide */}
                 {pointsRender.map((p, i) => (
                     <g key={i} className="group">
+                        {/* Vertical Guide Line (Crosshair) */}
+                        <line 
+                            x1={p.x} 
+                            y1={p.y} 
+                            x2={p.x} 
+                            y2={height} 
+                            stroke="#D1D5DB" 
+                            strokeWidth="1" 
+                            strokeDasharray="4 4"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                        />
+                        
+                        {/* Horizontal Guide Line */}
+                        <line 
+                            x1={0} 
+                            y1={p.y} 
+                            x2={p.x} 
+                            y2={p.y} 
+                            stroke="#D1D5DB" 
+                            strokeWidth="1" 
+                            strokeDasharray="4 4"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                        />
+
+                        {/* Value Label */}
+                        <text
+                            x={p.x}
+                            y={p.y - 15}
+                            textAnchor="middle"
+                            className="text-xs font-bold fill-gray-900 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none drop-shadow-md"
+                        >
+                            ¥{p.value.toLocaleString()}
+                        </text>
+
+                        {/* Point */}
                         <circle 
                             cx={p.x} 
                             cy={p.y} 
                             r="6" 
                             className="fill-white stroke-black stroke-[3px] opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer shadow-lg" 
                         />
+                        {/* Hit Area */}
                         <circle 
                             cx={p.x} 
                             cy={p.y} 
                             r="20" 
                             className="fill-transparent cursor-pointer" 
                         />
-                        {/* Tooltip */}
-                        <foreignObject 
-                            x={Math.min(Math.max(p.x - 75, 0), width - 150)} 
-                            y={p.y - 60} 
-                            width="150" 
-                            height="60" 
-                            className="opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 z-50"
-                        >
-                            <div className="bg-black text-white text-xs rounded-xl py-2 px-3 text-center shadow-xl transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                                <div className="text-gray-400 text-[10px] mb-0.5">{p.date}</div>
-                                <div className="font-bold text-sm">累计: ¥{p.value.toLocaleString()}</div>
-                            </div>
-                        </foreignObject>
                     </g>
                 ))}
             </g>

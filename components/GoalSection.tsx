@@ -89,7 +89,7 @@ export const GoalSection: React.FC<GoalSectionProps> = ({
               onChange={(e) => setTempTarget(e.target.value)}
               onBlur={handleSave}
               onKeyDown={handleKeyDown}
-              className="text-[60px] md:text-[120px] font-black bg-transparent text-center text-gray-900 border-b-2 border-black focus:outline-none w-full max-w-4xl leading-none tracking-tight"
+              className="text-[40px] md:text-[80px] lg:text-[120px] font-black bg-transparent text-center text-gray-900 border-b-2 border-black focus:outline-none w-full max-w-4xl leading-none tracking-tight"
             />
             <button 
               onClick={handleSave}
@@ -100,14 +100,14 @@ export const GoalSection: React.FC<GoalSectionProps> = ({
           </div>
         ) : (
           <div 
-            className="flex items-center justify-center gap-4 cursor-pointer flex-wrap"
+            className="flex items-center justify-center gap-2 md:gap-4 cursor-pointer flex-wrap"
             onClick={() => {
               setTempTarget(targetAmount.toString());
               setIsEditing(true);
             }}
           >
-            {/* 120px font size as requested */}
-            <h1 className="text-[60px] md:text-[100px] lg:text-[120px] font-black leading-none tracking-tight text-center break-all">
+            {/* Optimized font sizes for mobile to desktop transition */}
+            <h1 className="text-[40px] md:text-[80px] lg:text-[120px] font-black leading-none tracking-tight text-center break-all">
               <span 
                 style={{ color: currentTextColorStr }}
                 className="transition-colors duration-500"

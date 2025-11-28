@@ -8,7 +8,7 @@ import { StatsOverview } from './components/StatsOverview';
 import { Typewriter } from './components/Typewriter';
 import { FadeIn } from './components/FadeIn';
 import { RevenueEntry } from './types';
-import { Activity } from 'lucide-react';
+import { Activity, Download } from 'lucide-react';
 
 const STORAGE_KEY = 'revenue_tracker_data_v1';
 
@@ -47,6 +47,26 @@ const App: React.FC = () => {
 
   const handleDeleteEntry = (id: string) => {
     setEntries(prev => prev.filter(e => e.id !== id));
+  };
+
+  const handleExportCSV = () => {
+    const headers = ['Date', 'Type', 'Amount', 'Note'];
+    const csvContent = [
+      headers.join(','),
+      ...entries.map(e => {
+        const type = e.amount >= 0 ? 'Income' : 'Loss';
+        return `${e.date},${type},${e.amount},"${e.note || ''}"`;
+      })
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `revenue_export_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   // Background Image - 3D Coin/Bag style
@@ -99,9 +119,18 @@ const App: React.FC = () => {
                 </div>
                 <span className="font-semibold text-xl tracking-tight text-gray-900">收益<span className="text-gray-500 font-normal">记录器</span></span>
             </div>
-            {/* Optional Top Nav Items */}
-            <div className="text-xs text-gray-400 font-medium hidden sm:block">
-                v1.7 Dashboard
+            {/* Actions */}
+            <div className="flex items-center gap-4">
+                <button 
+                  onClick={handleExportCSV}
+                  className="flex items-center gap-2 text-xs font-semibold text-gray-600 hover:text-black hover:bg-black/5 px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="hidden sm:inline">导出数据</span>
+                </button>
+                <div className="text-xs text-gray-400 font-medium hidden sm:block">
+                    v1.8 Dashboard
+                </div>
             </div>
         </div>
       </header>

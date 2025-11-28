@@ -8,7 +8,7 @@ interface AddEntryProps {
 }
 
 export const AddEntry: React.FC<AddEntryProps> = ({ onAdd }) => {
-  // Generate list of weekly dates from 2025-11-08 to 2027-01-03
+  // Generate list of weekly dates from 2025-11-09 to 2027-01-03
   const sundayOptions = useMemo(() => {
     const dates: string[] = [];
     const toLocalDateString = (date: Date) => {
@@ -18,12 +18,9 @@ export const AddEntry: React.FC<AddEntryProps> = ({ onAdd }) => {
         return `${year}-${month}-${day}`;
     };
 
-    // Range Start: 2025-11-08
-    const current = new Date('2025-11-08T00:00:00');
+    // Range Start: 2025-11-09 (Sunday)
+    const current = new Date('2025-11-09T00:00:00');
     
-    // Logic to strictly start from the given date (11.8) and increment weekly
-    // Removed auto-alignment to Sunday to respect the specific "Start from 11.8" request.
-
     const end = new Date('2027-01-03T23:59:59');
 
     while (current <= end) {
