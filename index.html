@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Revenue Flow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+        background-color: #F5F6F8; /* Updated to Warmer Light Gray */
+        color: #1d1d1f; /* Apple Dark Text */
+        -webkit-font-smoothing: antialiased;
+      }
+      /* Custom scrollbar for webkit - Light mode */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1d5db; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af; 
+      }
+      
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+
+      /* Animations */
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+      
+      .animate-blink {
+        animation: blink 1s step-end infinite;
+      }
+
+      @keyframes float {
+        0% { transform: translateY(0px) rotate(-12deg); }
+        50% { transform: translateY(-15px) rotate(-10deg); }
+        100% { transform: translateY(0px) rotate(-12deg); }
+      }
+      @keyframes float-reverse {
+        0% { transform: translateY(0px) rotate(15deg); }
+        50% { transform: translateY(-15px) rotate(12deg); }
+        100% { transform: translateY(0px) rotate(15deg); }
+      }
+
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-float-reverse {
+        animation: float-reverse 7s ease-in-out infinite;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 20px, 0);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "d3": "https://aistudiocdn.com/d3@^7.9.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
